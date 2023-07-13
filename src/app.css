@@ -1,0 +1,46 @@
+* {
+  color: white;
+}
+
+body {
+  background-color: black;
+  font-family: monospace;
+  overflow: hidden;
+
+  --gap: 1rem;
+
+  margin: 0;
+  padding: 0;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.fill {
+  width: 100%;
+  height: 100%;
+}
+
+d {
+  mix-blend-mode: difference;
+  font-family: monospace;
+}
+
+.fill-x {
+  width: 100%;
+}
+
+.margin-top {
+  margin-top: var(--gap);
+}
+
+.inv-button {
+  border: 1px solid black !important;
+}
+
+.inv-button:hover {
+  background-color: black !important;
+}
