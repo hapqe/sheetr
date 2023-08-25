@@ -1,10 +1,19 @@
 <script lang="ts">
-    import { entries, grid, pixels, showSheet, size } from "../stores";
+    import {
+        entries,
+        exportScale,
+        exporting,
+        json,
+        pixels,
+        showSheet,
+        size,
+    } from "../stores";
     import Container from "./Container.svelte";
     import Sprite from "./Sprite.svelte";
-    import html2canvas from "html2canvas";
+    import domtoimage from "dom-to-image";
 
     let hover = false;
+    let entryIndex = 0;
 
     function calculateSize(n: number) {
         return Math.ceil(Math.sqrt(n));
@@ -20,6 +29,8 @@
 
             checkEntry(entry);
         }
+
+        requestAnimationFrame(() => (hover = false));
     }
 
     function checkEntry(entry: FileSystemEntry) {
@@ -50,32 +61,32 @@
     let sheet: HTMLDivElement;
 
     window.addEventListener("export", (e) => {
-        const f = ($pixels * $size) / sheet.clientHeight;
+        $exporting = true;
 
-        console.log(f);
+        const f = $pixels * $size;
+        $exportScale = f / sheet.clientWidth;
 
-        html2canvas(sheet, {
-            backgroundColor: null,
-            scale: f,
-        }).then((canvas) => {
+        domtoimage.toPng(sheet, { width: f, height: f }).then((dataUrl) => {
             const a = document.createElement("a");
-            a.href = canvas.toDataURL("image/png");
-            a.download = "spritesheet.png";
+            a.download = "sheet.png";
+            a.href = dataUrl;
             a.click();
+
+            $exportScale = 1;
+            $exporting = false;
         });
     });
 </script>
 
-<main>
+<main
+    on:dragenter|preventDefault={() => (hover = true)}
+    on:dragleave|preventDefault={() => (hover = false)}
+    on:dragover|preventDefault
+    on:drop|preventDefault={upload}
+>
     <Container>
         <div
             role="form"
-            on:mouseenter={() => (hover = $entries.length === 0)}
-            on:mouseleave={() => (hover = false)}
-            on:dragenter|preventDefault={() => (hover = true)}
-            on:dragleave|preventDefault={() => (hover = false)}
-            on:dragover|preventDefault
-            on:drop|preventDefault={upload}
             class="select center fill {hover ? 'hover' : ''}"
             bind:clientWidth={width}
             bind:clientHeight={height}
@@ -91,8 +102,8 @@
                         height
                     )}px; height: {Math.min(width, height)}px;"
                 >
-                    {#each $entries as file}
-                        <Sprite {hover} entry={file} />
+                    {#each $entries as file, index}
+                        <Sprite {index} entry={file} />
                     {/each}
                 </div>
             {/if}
@@ -109,11 +120,14 @@
         height: 100%;
     }
 
+    main * {
+        pointer-events: none;
+    }
+
     .grid {
         display: flex;
         align-content: flex-start;
         flex-wrap: wrap;
-        pointer-events: none;
     }
 
     .hover {

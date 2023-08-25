@@ -1,7 +1,10 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import {
+        exportScale,
+        exporting,
         grid,
+        json,
         preview,
         scaling,
         selected,
@@ -10,11 +13,25 @@
         yOffset,
     } from "../stores";
 
-    export let entry: FileSystemEntry, hover: boolean;
+    export let entry: FileSystemEntry, index: number;
 
     let url = "";
 
     onMount(() => {
+        const path = entry.fullPath.split("/").filter((p) => p);
+        if (path.length === 1) {
+            $json[path[0]] = index;
+        } else {
+            path.pop();
+
+            let x = $json;
+            for (const p of path) {
+                x = x[p] = x[p] ?? {};
+            }
+            x.from = x.from ?? index;
+            x.to = index;
+        }
+
         // @ts-ignore
         entry.file((f) => {
             url = URL.createObjectURL(f);
@@ -29,8 +46,11 @@
         $selected = entry;
         $preview = url;
     }}
-    class="{$grid ? 'outline' : ''} {$selected == entry ? 'selected' : ''}"
-    style="width: calc(100% / {$size}); height: calc(100% / {$size});"
+    class="{$grid && !$exporting ? 'outline' : ''} {$selected == entry &&
+    !$exporting
+        ? 'selected'
+        : ''}"
+    style="width: calc({$exportScale} * 100% / {$size}); height: calc({$exportScale} * 100% / {$size});"
 >
     <div
         class="fill"

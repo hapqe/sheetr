@@ -1,7 +1,8 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
 
-    export let classes = "";
+    export let classes = "",
+        enabled = true;
 
     const click = createEventDispatcher();
 
@@ -10,7 +11,9 @@
     }
 </script>
 
-<button on:click={handleClick} class={classes}><slot /></button>
+<button disabled={!enabled} on:click={handleClick} class={classes}
+    ><slot /></button
+>
 
 <style>
     button {
@@ -19,8 +22,13 @@
         border: 1px solid white;
     }
 
-    :hover {
+    :hover:enabled {
         background: white;
         cursor: pointer;
+    }
+
+    :disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
     }
 </style>

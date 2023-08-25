@@ -1,10 +1,9 @@
 <script lang="ts">
-    export let checked = false,
-        label: string = "";
+    export let checked = false;
 </script>
 
 <main>
-    {label}
+    <slot />
     <span>
         <input bind:checked type="checkbox" name="" id="" />
     </span>

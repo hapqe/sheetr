@@ -1,7 +1,9 @@
 <script lang="ts">
     import { writable } from "svelte/store";
     import {
+        entries,
         grid,
+        json,
         pixels,
         preview,
         scaling,
@@ -14,6 +16,16 @@
     import Slider from "./Slider.svelte";
     import Check from "./Check.svelte";
     import Button from "./Button.svelte";
+
+    function exportJson() {
+        const a = document.createElement("a");
+        const file = new Blob([JSON.stringify($json)], {
+            type: "application/json",
+        });
+        a.href = URL.createObjectURL(file);
+        a.download = "sheet.json";
+        a.click();
+    }
 </script>
 
 <main>
@@ -64,10 +76,8 @@
                 <hr />
                 <h2>visualization</h2>
 
-                <Check label={"show grid"} bind:checked={$grid}>grid</Check>
-                <Check label={"show sheet"} bind:checked={$showSheet}
-                    >grid</Check
-                >
+                <Check bind:checked={$grid}>show grid</Check>
+                <Check bind:checked={$showSheet}>show sheet</Check>
             </div>
 
             <div>
@@ -78,10 +88,15 @@
             </div>
             <div id="export">
                 <Button
+                    enabled={$showSheet && !!$entries.length}
+                    on:click={exportJson}>📊 <d>export json</d></Button
+                >
+                <Button
+                    enabled={$showSheet && !!$entries.length}
                     on:click={() =>
                         window.dispatchEvent(
                             new CustomEvent("export", { detail: "png" })
-                        )}>✈️ <d>export png</d></Button
+                        )}>🚀 <d>export png</d></Button
                 >
             </div>
         </div>
@@ -101,8 +116,8 @@
 
     .preview-wrapper {
         box-shadow: 0px 0px 0px 1px white;
-        height: 200px;
-        width: 200px;
+        height: 150px;
+        width: 150px;
         overflow: hidden;
     }
 
@@ -131,5 +146,6 @@
     #export {
         display: flex;
         justify-content: flex-end;
+        gap: var(--gap);
     }
 </style>

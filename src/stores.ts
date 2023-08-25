@@ -13,3 +13,7 @@ export const selected = writable<FileSystemEntry | null>(null);
 export const preview = writable('');
 
 export const showSheet = writable(true);
+
+export const exportScale = writable(1);
+export const exporting = writable(false);
+export const json = writable<any>({});

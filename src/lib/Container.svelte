@@ -8,5 +8,6 @@
         mix-blend-mode: difference;
 
         height: 100%;
+        overflow-y: auto;
     }
 </style>

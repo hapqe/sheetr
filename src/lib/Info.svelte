@@ -1,5 +1,12 @@
 <script lang="ts">
-    import { entries, pixels, scaling, xOffset, yOffset } from "../stores";
+    import {
+        entries,
+        pixels,
+        preview,
+        scaling,
+        xOffset,
+        yOffset,
+    } from "../stores";
     import Button from "./Button.svelte";
     import Container from "./Container.svelte";
 
@@ -35,6 +42,7 @@
 
     function resetSprites() {
         $entries = [];
+        $preview = "";
 
         dialog.close();
     }
@@ -51,7 +59,7 @@
         on:click={() => dialog.close()}
     >
         <img
-            src="src/images/close.svg"
+            src="close.svg"
             style="cursor: pointer; height: 2rem;"
             alt=""
         /></button
