@@ -53,6 +53,12 @@
             $entries = [...$entries, entry];
             $size = calculateSize($entries.length);
         }
+
+        $json.meta = {
+            total: $entries.length,
+            size: $size,
+            pixels: $pixels,
+        }
     }
 
     let width = 0;
